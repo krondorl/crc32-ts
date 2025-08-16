@@ -1,0 +1,44 @@
+{
+  "name": "crc32-ts",
+  "description": "Crc32 in TypeScript with typed arrays",
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "scripts": {
+    "test": "vitest run src/index.test.ts",
+    "build": "tsc -p tsconfig.json",
+    "bundle": "tsup src/index.ts --format esm --dts --out-dir dist",
+    "smoke": "node scripts/smoke.mjs",
+    "prepublishOnly": "npm run build && npm run bundle",
+    "main": "tsx src/main.ts"
+  },
+  "keywords": [
+    "crc",
+    "crc32",
+    "cyclic-redundancy-check"
+  ],
+  "author": "Adam Burucs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krondorl/crc32-ts.git"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "tsx": "^4.20.4",
+    "vitest": "^3.2.4",
+    "typescript": "^5.4.2",
+    "tsup": "^6.7.0"
+  },
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ]
+}
