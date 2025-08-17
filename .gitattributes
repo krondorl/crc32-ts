@@ -1,2 +1,21 @@
-# Ensure all files are checked out with LF line endings
-* text eol=lf
+# Set a default rule to auto-detect and handle line endings for all text files.
+# This is a safe baseline.
+* text=auto
+
+# Force specific file types to use LF line endings.
+# This ensures your source code is consistent.
+*.ts text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.svg text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+# Add any other source code extensions you use here.
+
+# Prevent Git from modifying binary files like images.
+*.png binary
+*.jpg binary
+*.gif binary
+*.webp binary
+# Add any other binary file types here.
