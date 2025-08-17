@@ -11,9 +11,9 @@ Crc32 (cyclic redundancy check) in TypeScript with typed arrays.
 
 `crc32-ts` is a small, well-typed TypeScript implementation of the CRC-32 checksum algorithm. It provides a compact, dependency free API for computing CRC-32 values in both Node and browser environments, with tests and examples included.
 
-<img src="assets/main2.png" alt="npm run main">
+<img src="assets/main3.png" alt="npm run main">
 
-<img src="assets/tests2.png" alt="npm run main">
+<img src="assets/tests3.png" alt="npm run main">
 
 ## Tech Stack
 
