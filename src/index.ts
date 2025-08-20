@@ -20,41 +20,62 @@ class EmptyDataArrayError extends Error {
   }
 }
 
-export class Crc32 {
-  #CRC32_POLYNOMIAL = 0xedb88320;
-  #table = new Uint32Array(256).fill(0);
+const CRC32_POLYNOMIAL = 0xedb88320;
+const TABLE = new Uint32Array(256);
 
-  constructor() {
-    this.#generateTable();
-  }
-
-  #generateTable(): void {
-    for (let i = 0; i < 256; i++) {
-      let crc = i;
-      for (let j = 0; j < 8; j++) {
-        if (crc & 1) {
-          crc = (crc >>> 1) ^ this.#CRC32_POLYNOMIAL;
-        } else {
-          crc = crc >>> 1;
-        }
+function generateTable(): Uint32Array {
+  for (let i = 0; i < 256; i++) {
+    let crc = i;
+    for (let j = 0; j < 8; j++) {
+      if (crc & 1) {
+        crc = (crc >>> 1) ^ CRC32_POLYNOMIAL;
+      } else {
+        crc = crc >>> 1;
       }
-      this.#table[i] = crc;
     }
+    TABLE[i] = crc;
+  }
+  return TABLE;
+}
+
+const lookupTable = generateTable();
+
+/**
+ * This is the main function you need.
+ *
+ * - Please note that it accepts only `Uint8Array`.
+ * - It returns a numeric value in `base 10`.
+ *
+ * If you are using string input, you need to encode with `TextEncoder` first.
+ *
+ * Example usage:
+ * ```ts
+ * import { calculateCrc } from 'crc32-ts';
+ *
+ * const encoder = new TextEncoder();
+ * const uInt8Array = encoder.encode(text);
+ * const result = calculateCrc(uInt8Array);
+ *
+ * // Base 10 by default, if you need hexa, convert it to base 16.
+ * console.log(`✅ crc32 value 0x${crcResult.toString(16)}`);
+ * ```
+ *
+ * @param data - A `Uint8Array` typed array.
+ * @returns `Base 10` numeric value.
+ */
+export function calculateCrc(data: Uint8Array): number {
+  if (!(data instanceof Uint8Array)) {
+    throw new InvalidInputError(data);
   }
 
-  calculateCrc(data: Uint8Array): number {
-    if (!(data instanceof Uint8Array)) {
-      throw new InvalidInputError(data);
-    }
-
-    if (data.length === 0) {
-      throw new EmptyDataArrayError(data);
-    }
-
-    let crc = 0xffffffff;
-    for (let i = 0; i < data.length; i++) {
-      crc = (crc >>> 8) ^ this.#table[(crc ^ data[i]) & 0xff];
-    }
-    return (crc ^ 0xffffffff) >>> 0;
+  if (data.length === 0) {
+    throw new EmptyDataArrayError(data);
   }
+
+  let crc = 0xffffffff;
+  for (let i = 0; i < data.length; i++) {
+    crc = (crc >>> 8) ^ lookupTable[(crc ^ data[i]) & 0xff];
+  }
+
+  return (crc ^ 0xffffffff) >>> 0;
 }
