@@ -7,14 +7,14 @@
  */
 
 class InvalidInputError extends Error {
-  constructor(public data: unknown) {
+  constructor(public data: Uint8Array) {
     super("Invalid input: data must be a Uint8Array.");
     this.name = "InvalidInputError";
   }
 }
 
 class EmptyDataArrayError extends Error {
-  constructor(public data: unknown) {
+  constructor(public data: Uint8Array) {
     super("Cannot calculate CRC for an empty data array.");
     this.name = "EmptyDataArrayError";
   }
@@ -23,22 +23,20 @@ class EmptyDataArrayError extends Error {
 const CRC32_POLYNOMIAL = 0xedb88320;
 const TABLE = new Uint32Array(256);
 
-function generateTable(): Uint32Array {
-  for (let i = 0; i < 256; i++) {
-    let crc = i;
-    for (let j = 0; j < 8; j++) {
-      if (crc & 1) {
-        crc = (crc >>> 1) ^ CRC32_POLYNOMIAL;
-      } else {
-        crc = crc >>> 1;
-      }
+/**
+ * Precalculate lookup table.
+ */
+for (let i = 0; i < 256; i++) {
+  let crc = i;
+  for (let j = 0; j < 8; j++) {
+    if (crc & 1) {
+      crc = (crc >>> 1) ^ CRC32_POLYNOMIAL;
+    } else {
+      crc = crc >>> 1;
     }
-    TABLE[i] = crc;
   }
-  return TABLE;
+  TABLE[i] = crc;
 }
-
-const lookupTable = generateTable();
 
 /**
  * This is the main function you need.
@@ -74,7 +72,7 @@ export function calculateCrc(data: Uint8Array): number {
 
   let crc = 0xffffffff;
   for (let i = 0; i < data.length; i++) {
-    crc = (crc >>> 8) ^ lookupTable[(crc ^ data[i]) & 0xff];
+    crc = (crc >>> 8) ^ TABLE[(crc ^ data[i]) & 0xff];
   }
 
   return (crc ^ 0xffffffff) >>> 0;
