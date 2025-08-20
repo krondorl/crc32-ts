@@ -6,9 +6,8 @@
  * MIT Licensed
  */
 
-import { Crc32 } from "./index.js";
+import { calculateCrc } from "./index.js";
 
-const crc32 = new Crc32();
 const encoder = new TextEncoder();
 
 function printIntro(): void {
@@ -22,7 +21,7 @@ function printCrc(text: string): void {
   console.log(`string ${text}`);
 
   try {
-    const crcResult = crc32.calculateCrc(uInt8Array);
+    const crcResult = calculateCrc(uInt8Array);
     console.log(`✅ crc32 value 0x${crcResult.toString(16)}`);
   } catch (error) {
     if (error instanceof Error) {
